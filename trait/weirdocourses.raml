@@ -11,6 +11,8 @@ types:
  patient: !include datatypes/patientdataype.raml
 traits:
  errorTraits: !include traits/errortrait.raml
+ pageable: !include traits/pageabletrait.raml
+ sortable: !include traits/sortabletrait.raml
 
 /patients:
   get:
@@ -22,7 +24,7 @@ traits:
         application/json:
           type: patient []
           example: !include example/patientsexample.raml
-    is: [errorTraits] 
+    is: [errorTraits, pageable, sortable,] 
   /{id}:
     get:
       responses:
