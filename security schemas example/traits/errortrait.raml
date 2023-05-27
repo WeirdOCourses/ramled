@@ -1,0 +1,48 @@
+#%RAML 1.0 Trait
+
+  responses:
+    400:
+      body:
+        application/json:
+          example:
+            {
+              "message": "Bad Request",
+              "errorCode": "400",
+              "details": "The request was malformed."
+            }
+    401:
+      body:
+        application/json:
+          example:
+            {
+              "message": "Unauthorized",
+              "errorCode": "401",
+              "details": "The request requires authentication."
+            }
+    403:
+      body:
+        application/json:
+          example:
+            {
+              "message": "Forbidden",
+              "errorCode": "403",
+              "details": "The request is not authorized."
+            }
+    404:
+      body:
+        application/json:
+          example:
+            {
+              "message": "Not Found",
+              "errorCode": "404",
+              "details": "The requested resource was not found."
+            }
+    500:
+      body:
+        application/json:
+          example:
+            {
+              "message": "Internal Server Error",
+              "errorCode": "500",
+              "details": "An unexpected error occurred."
+            }
