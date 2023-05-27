@@ -1,0 +1,111 @@
+#%RAML 1.0
+title: weirdocourses
+
+protocols: [HTTP, HTTPS]
+
+mediaType:
+  - application/json
+  - application/xml
+
+types: 
+ patient: !include datatypes/patientdataype.raml
+traits:
+ errorTraits: !include traits/errortrait.raml
+
+/patients:
+  get:
+    description: It fetchs all the patients
+    
+    responses:
+      200:
+       body:
+        application/json:
+          type: patient []
+          example: !include example/patientsexample.raml
+    is: [errorTraits] 
+  /{id}:
+    get:
+      responses:
+        200:
+         body:
+          application/json:
+            type: patient
+            example: !include example/example.json
+  post:
+    body:
+      application/json:
+        example:
+          {
+               "patientId": "p01",
+               "name": "Kebede",
+               "age": 32,
+               "address": "Addis Ababa"
+              }
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+               "message": "Successfully add the patient"
+              }
+      404:
+        body:
+         application/json:
+           example: {"message": "Resource Not Found", "errorCode":   "404"}
+      500:
+        body:
+          application/json:
+            example: {"message": "Internal Server Error", "errorCode": "500"}
+  put:
+    queryParameters:
+      patientId: 
+       type: string
+       required: false
+       minLength: 1
+    body:
+      application/json:
+        example:
+          {
+               "patientId": "p01",
+               "name": "Kebede",
+               "age": 32,
+               "address": "Addis Ababa"
+              }
+    responses:
+      200:
+         body:
+          application/json:
+            example:
+              {
+               "message": "Successfully updated the patient"
+              }
+      404:
+        body:
+         application/json:
+           example: {"message": "Resource Not Found", "errorCode":   "404"}
+      500:
+        body:
+          application/json:
+            example: {"message": "Internal Server Error", "errorCode": "500"}
+  delete:
+    queryParameters:
+      patientId:
+        type: string
+        default: "p02"
+    responses:
+      200:
+         body:
+          application/json:
+            example:
+              {
+               "message": "Successfully deleted the patient"
+              }
+      404:
+        body:
+         application/json:
+           example: {"message": "Resource Not Found", "errorCode":   "404"}
+      500:
+        body:
+          application/json:
+            example: {"message": "Internal Server Error", "errorCode": "500"}
