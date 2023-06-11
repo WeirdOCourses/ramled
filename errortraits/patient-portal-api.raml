@@ -117,12 +117,4 @@ traits:
             type: appointement[]
             example: !include examples/appointements.raml
              
-      404:
-        body:
-         application/json:
-           example: {"message": "Resource Not Found", "errorCode":   "404"}
-      500:
-        body:
-          application/json:
-            example: {"message": "Internal Server Error", "errorCode": "500"}
-            
+    is: [errortraits]
