@@ -1,0 +1,128 @@
+#%RAML 1.0
+title: Patient portal API
+description: The API allows patients to view their medical records, schedule appointments, and manage their medications.
+version: v1
+protocols: [HTTP, HTTPS]
+
+mediaType:
+  - application/json
+  - application/xml
+
+types: 
+  patient: !include datatypes/patientdatatype.raml
+  medication: !include datatypes/medicationdataType.raml
+  appointement: !include datatypes/appointementdataType.raml
+
+traits:
+  errortraits: !include traits/errortrait.raml
+
+/patients:
+  description: A patient is a person who is registered with the patient portal.
+  get:
+    description: It fetches all the patients
+    responses:
+      200:
+        body:
+          application/json:
+            type: patient[]
+            example:
+              !include examples/patients.raml
+    is: [errortraits]  
+
+  /{id}:
+   get:
+     description: It fetches a specific patient with its id
+     responses:
+       200:
+        body:
+          application/json:
+            type: patient
+            example:
+              !include examples/patient.raml
+     is: [errortraits]
+  post:
+    description: It will add a patient to the portal
+    body:
+      application/json:
+         type: patient
+         example:
+           !include examples/patient.raml
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              {"message": "Successfully add the patient"}
+    is: [errortraits]   
+  put:
+    description: It is used to update the information about the patient
+    queryParameters:
+      patientId:
+        type: string
+        required: false
+        minLength: 1
+        example: "p01"
+    body:
+      application/json:
+        type: patient
+        example:
+           !include examples/patient.raml
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {"message": "Successfully update patient information"}
+    is: [errortraits]
+  delete:
+    queryParameters:
+      patientId:
+        type: string
+        example: "p01"
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+             {"message": "Successfully delete the patient from the portal"}
+    is: [errortraits]
+
+/medications/{patient_id}:
+  description: It gets all the medications for a patient
+  uriParameters:
+      patient_id:
+        description: The ID of the patient.
+        type: string
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: medication[]
+            example:
+              !include examples/medications.raml
+    is: [errortraits]
+       
+/appointments/{patient_id}:
+  description: Get all appointments for a patient.
+  uriParameters:
+      patient_id:
+        description: The ID of the patient.
+        type: string
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: appointement[]
+            example: !include examples/appointements.raml
+             
+      404:
+        body:
+         application/json:
+           example: {"message": "Resource Not Found", "errorCode":   "404"}
+      500:
+        body:
+          application/json:
+            example: {"message": "Internal Server Error", "errorCode": "500"}
+            
