@@ -1,0 +1,19 @@
+#%RAML 1.0 Library
+
+types: 
+  patient: !include ../datatypes/patientdatatype.raml
+  medication: !include ../datatypes/medicationdataType.raml
+  appointement: !include ../datatypes/appointementdataType.raml
+
+traits:
+  errortraits: !include ../traits/errortrait.raml
+  pageabletraits: !include ../traits/pageabletrait.raml
+  sortabletraits: !include ../traits/sortabletrait.raml
+
+securitySchemes:
+  basicsecurity: !include ../securityschemes/basicauthsecurityScheme.raml
+  oauthsecurity: !include ../securityschemes/oauthsecurityScheme.raml
+  customsecurity: !include ../securityschemes/oauthsecurityScheme.raml
+
+resourceTypes:
+  Collections: !include ../resourcetypes/resourceType.raml

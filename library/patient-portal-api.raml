@@ -1,0 +1,122 @@
+#%RAML 1.0
+title: Patient portal API
+description: The API allows patients to view their medical records, schedule appointments, and manage their medications.
+version: v1
+protocols: [HTTP, HTTPS]
+
+mediaType:
+  - application/json
+  - application/xml
+
+uses:
+  Lib: libraries/library.raml
+
+/patients:
+  description: A patient is a person who is registered with the patient portal.
+  securedBy:
+    - Lib.basicsecurity
+  get:
+    description: It fetches all the patients
+    responses:
+      200:
+        body:
+          application/json:
+            type: Lib.patient[]
+            example:
+              !include examples/patients.raml
+    is: [Lib.errortraits, Lib.pageabletraits, Lib.sortabletraits]  
+
+  /{id}:
+   get:
+     description: It fetches a specific patient with its id
+     responses:
+       200:
+        body:
+          application/json:
+            type: Lib.patient
+            example:
+              !include examples/patient.raml
+     is: [Lib.errortraits]
+  post:
+    description: It will add a patient to the portal
+    body:
+      application/json:
+         type: Lib.patient
+         example:
+           !include examples/patient.raml
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              {"message": "Successfully add the patient"}
+    is: [Lib.errortraits]   
+  put:
+    description: It is used to update the information about the patient
+    queryParameters:
+      patientId:
+        type: string
+        required: false
+        minLength: 1
+        example: "p01"
+    body:
+      application/json:
+        type: Lib.patient
+        example:
+           !include examples/patient.raml
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {"message": "Successfully update patient information"}
+    is: [Lib.errortraits]
+  delete:
+    queryParameters:
+      patientId:
+        type: string
+        example: "p01"
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+             {"message": "Successfully delete the patient from the portal"}
+    is: [Lib.errortraits]
+
+/medications/{patient_id}:
+  description: It gets all the medications for a patient
+  securedBy: 
+    - Lib.oauthsecurity
+  uriParameters:
+      patient_id:
+        description: The ID of the patient.
+        type: string
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: Lib.medication[]
+            example:
+              !include examples/medications.raml
+    is: [Lib.errortraits]
+       
+/appointments/{patient_id}:
+  description: Get all appointments for a patient.
+  securedBy:
+    - Lib.customsecurity
+  uriParameters:
+      patient_id:
+        description: The ID of the patient.
+        type: string
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: Lib.appointement[]
+            example: !include examples/appointements.raml
+             
+    is: [Lib.errortraits]
+            
