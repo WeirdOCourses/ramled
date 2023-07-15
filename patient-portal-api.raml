@@ -8,79 +8,23 @@ mediaType:
   - application/json
   - application/xml
 
+uses:
+  Lib: libraries/library.raml
+
 /patients:
   description: A patient is a person who is registered with the patient portal.
+  securedBy:
+    - Lib.basicsecurity
   get:
     description: It fetches all the patients
     responses:
       200:
         body:
           application/json:
+            type: Lib.patient[]
             example:
-              [{
-                "patientId": "p01",
-                "name": "Kebede Alemu",
-                "age": 32,
-                "email": "kebede@gmail.com",
-                "phone": "+251-9-41-01-71-98",
-                "gender": "male",
-                 "address": {
-                  "Country": "Ethiopia",
-                  "City": "Addis Ababa",
-                  "Street": "Bole"
-                },
-                "room_service": true
-              },
-              {
-                "patientId": "p02",
-                "name": "Selamawit Abreham",
-                "age": 22,
-                "email": "selamawit@gmail.com",
-                "phone": "+251-9-72-18-53-34",
-                "gender": "female",
-                 "address": {
-                  "Country": "Ethiopia",
-                  "City": "Arbaminch",
-                  "Street": "Hayq"
-                },
-                "room_service": false
-              },
-              {
-                "patientId": "p03",
-                "name": "Chala Hagos",
-                "age": 28,
-                "email": "chala@gmail.com",
-                "phone": "+251-9-23-90-87-22",
-                "gender": "male",
-                 "address": {
-                  "Country": "Ethiopia",
-                  "City": "Debremarkos",
-                  "Street": "Abima"
-                },
-                "room_service": false
-              },
-              {
-                "patientId": "p04",
-                "name": "Gatoch Samuel",
-                "age": 72,
-                "email": "gatoch@gmail.com",
-                "phone": "+251-9-88-90-23-45",
-                "gender": "male",
-                 "address": {
-                  "Country": "Ethiopia",
-                  "City": "Adama",
-                  "Street": "Menahiriya"
-                },
-                "room_service": true
-              }]
-      404:
-        body:
-          application/json:
-            example: {"message": "Resource Not Found", "errorCode":   "404"}
-      500:
-        body:
-          application/json:
-            example: {"message": "Internal Server Error", "errorCode": "500"}
+              !include examples/patients.raml
+    is: [Lib.errortraits, Lib.pageabletraits, Lib.sortabletraits]  
 
   /{id}:
    get:
@@ -89,62 +33,24 @@ mediaType:
        200:
         body:
           application/json:
+            type: Lib.patient
             example:
-              {
-                "patientId": "p04",
-                "name": "Gatoch Samuel",
-                "age": 72,
-                "email": "gatoch@gmail.com",
-                "phone": "+251-9-88-90-23-45",
-                "gender": "male",
-                 "address": {
-                  "Country": "Ethiopia",
-                  "City": "Adama",
-                  "Street": "Menahiriya"
-                },
-                "room_service": true
-              }
-       404:
-        body:
-          application/json:
-            example: {"message": "Resource Not Found", "errorCode":   "404"}
-       500:
-        body:
-          application/json:
-            example: {"message": "Internal Server Error", "errorCode": "500"}
+              !include examples/patient.raml
+     is: [Lib.errortraits]
   post:
     description: It will add a patient to the portal
     body:
       application/json:
+         type: Lib.patient
          example:
-           {
-                "patientId": "p04",
-                "name": "Gatoch Samuel",
-                "age": 72,
-                "email": "gatoch@gmail.com",
-                "phone": "+251-9-88-90-23-45",
-                "gender": "male",
-                 "address": {
-                  "Country": "Ethiopia",
-                  "City": "Adama",
-                  "Street": "Menahiriya"
-                },
-                "room_service": true
-            }
+           !include examples/patient.raml
     responses:
       201:
         body:
           application/json:
             example:
               {"message": "Successfully add the patient"}
-      404:
-        body:
-          application/json:
-            example: {"message": "Resource Not Found", "errorCode":   "404"}
-      500:
-        body:
-          application/json:
-            example: {"message": "Internal Server Error", "errorCode": "500"}       
+    is: [Lib.errortraits]   
   put:
     description: It is used to update the information about the patient
     queryParameters:
@@ -155,35 +61,16 @@ mediaType:
         example: "p01"
     body:
       application/json:
+        type: Lib.patient
         example:
-           {
-                "patientId": "p01",
-                "name": "Kebede Alemu",
-                "age": 32,
-                "email": "kebede@gmail.com",
-                "phone": "+251-9-41-01-71-98",
-                "gender": "male",
-                 "address": {
-                  "Country": "Ethiopia",
-                  "City": "Addis Ababa",
-                  "Street": "Bole"
-                },
-                "room_service": true
-           }
+           !include examples/patient.raml
     responses:
       200:
         body:
           application/json:
             example:
               {"message": "Successfully update patient information"}
-      404:
-        body:
-         application/json:
-           example: {"message": "Resource Not Found", "errorCode":   "404"}
-      500:
-        body:
-          application/json:
-            example: {"message": "Internal Server Error", "errorCode": "500"}
+    is: [Lib.errortraits]
   delete:
     queryParameters:
       patientId:
@@ -195,17 +82,12 @@ mediaType:
           application/json:
             example:
              {"message": "Successfully delete the patient from the portal"}
-      404:
-        body:
-         application/json:
-           example: {"message": "Resource Not Found", "errorCode":   "404"}
-      500:
-        body:
-          application/json:
-            example: {"message": "Internal Server Error", "errorCode": "500"}
+    is: [Lib.errortraits]
 
 /medications/{patient_id}:
   description: It gets all the medications for a patient
+  securedBy: 
+    - Lib.oauthsecurity
   uriParameters:
       patient_id:
         description: The ID of the patient.
@@ -215,30 +97,15 @@ mediaType:
       200:
         body:
           application/json:
+            type: Lib.medication[]
             example:
-              [
-                {
-                  "id": 1,
-                  "name": "Lisinopril",
-                  "dosage": "10mg"
-                },
-                {
-                  "id": 2,
-                  "name": "Metformin",
-                  "dosage": "20mg"
-                }
-              ]
-      404:
-        body:
-         application/json:
-           example: {"message": "Resource Not Found", "errorCode":   "404"}
-      500:
-        body:
-          application/json:
-            example: {"message": "Internal Server Error", "errorCode": "500"}
+              !include examples/medications.raml
+    is: [Lib.errortraits]
        
 /appointments/{patient_id}:
   description: Get all appointments for a patient.
+  securedBy:
+    - Lib.customsecurity
   uriParameters:
       patient_id:
         description: The ID of the patient.
@@ -248,33 +115,8 @@ mediaType:
       200:
         body:
           application/json:
-            example: |
-              [
-                {
-                  "id": 1,
-                  "patient_id": "p01",
-                  "doctor_id": 
-                    [
-                      "d01", "d02"
-                    ],
-                  "date_time": "2023-06-05T10:00:00Z"
-                },
-                {
-                  "id": 2,
-                  "patient_id": "p01",
-                  "doctor_id": 
-                  [
-                      "d01", "d03"
-                  ],
-                  "date_time": "2023-06-07T14:00:00Z"
-                }
-              ]
-      404:
-        body:
-         application/json:
-           example: {"message": "Resource Not Found", "errorCode":   "404"}
-      500:
-        body:
-          application/json:
-            example: {"message": "Internal Server Error", "errorCode": "500"}
+            type: Lib.appointement[]
+            example: !include examples/appointements.raml
+             
+    is: [Lib.errortraits]
             
