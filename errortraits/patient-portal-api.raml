@@ -8,23 +8,26 @@ mediaType:
   - application/json
   - application/xml
 
-uses:
-  Lib: libraries/library.raml
+types: 
+  patient: !include datatypes/patientdatatype.raml
+  medication: !include datatypes/medicationdataType.raml
+  appointement: !include datatypes/appointementdataType.raml
+
+traits:
+  errortraits: !include traits/errortrait.raml
 
 /patients:
   description: A patient is a person who is registered with the patient portal.
-  securedBy:
-    - Lib.basicsecurity
   get:
     description: It fetches all the patients
     responses:
       200:
         body:
           application/json:
-            type: Lib.patient[]
+            type: patient[]
             example:
               !include examples/patients.raml
-    is: [Lib.errortraits, Lib.pageabletraits, Lib.sortabletraits]  
+    is: [errortraits]  
 
   /{id}:
    get:
@@ -33,15 +36,15 @@ uses:
        200:
         body:
           application/json:
-            type: Lib.patient
+            type: patient
             example:
               !include examples/patient.raml
-     is: [Lib.errortraits]
+     is: [errortraits]
   post:
     description: It will add a patient to the portal
     body:
       application/json:
-         type: Lib.patient
+         type: patient
          example:
            !include examples/patient.raml
     responses:
@@ -50,7 +53,7 @@ uses:
           application/json:
             example:
               {"message": "Successfully add the patient"}
-    is: [Lib.errortraits]   
+    is: [errortraits]   
   put:
     description: It is used to update the information about the patient
     queryParameters:
@@ -61,7 +64,7 @@ uses:
         example: "p01"
     body:
       application/json:
-        type: Lib.patient
+        type: patient
         example:
            !include examples/patient.raml
     responses:
@@ -70,7 +73,7 @@ uses:
           application/json:
             example:
               {"message": "Successfully update patient information"}
-    is: [Lib.errortraits]
+    is: [errortraits]
   delete:
     queryParameters:
       patientId:
@@ -82,12 +85,10 @@ uses:
           application/json:
             example:
              {"message": "Successfully delete the patient from the portal"}
-    is: [Lib.errortraits]
+    is: [errortraits]
 
 /medications/{patient_id}:
   description: It gets all the medications for a patient
-  securedBy: 
-    - Lib.oauthsecurity
   uriParameters:
       patient_id:
         description: The ID of the patient.
@@ -97,15 +98,13 @@ uses:
       200:
         body:
           application/json:
-            type: Lib.medication[]
+            type: medication[]
             example:
               !include examples/medications.raml
-    is: [Lib.errortraits]
+    is: [errortraits]
        
 /appointments/{patient_id}:
   description: Get all appointments for a patient.
-  securedBy:
-    - Lib.customsecurity
   uriParameters:
       patient_id:
         description: The ID of the patient.
@@ -115,8 +114,7 @@ uses:
       200:
         body:
           application/json:
-            type: Lib.appointement[]
+            type: appointement[]
             example: !include examples/appointements.raml
              
-    is: [Lib.errortraits]
-            
+    is: [errortraits]
